@@ -1,0 +1,96 @@
+Các kiểu DL:
+
++)String	+)Boolean	+)Regex 	+)Date
++)Number	+)Function	+)Null		+)Error
++)Object	+)Undefined	+)Array
+
+Các hàm xử lý với kiểu DL:
+
+-)String:	
+
+	+)Hàm khai báo một chuỗi: String(chuỗi)
+	+)toString() ép các kiểu dữ liệu như number, object, boolean sang String.
+	+)Nối chuỗi: sử dụng toán tử "+" , concat(String1, String2,...) hoặc tham chiếu: sử dụng ${biến} để tham chiếu đến một chuỗi khác
+	+)Hàm String.raw'chuỗi': đc sử dụng để thêm dấu "\" vào chuỗi mà ko cần biến đổi
+	+)Đảo chuỗi: split("").reverse().join("")
+	+)So sánh chuỗi: (Chuỗi cha).localeCompare(chuỗi muốn so sánh) hoặc dùng ===
+	+)Truy cập phần tử theo index( chỉ mục )
+	+)escape quote: dùng dấu \ để có thể thêm dấu' hoặc dấu" trong 1 chuỗi
+	+)Lọc dấu cách bị thừa bằng cách dùng hàm trim() (có thể chỉ cắt bỏ những dấu cách bị thừa ở trái, phải, đầu và cuối)
+	+)Tách chuỗi thành mảng sử dụng hàm spilt(chuỗi nối)
+	+)Từ một chuỗi ghép thành mảng sử dụng hàm join(chuỗi nối) --chuỗi nối là những dấu ", " , "; ",...
+	+)Hàm trả về mã unicode của 1 char trong chuỗi : charCodeAt(index)
+	+)Sử dụng typeof "biến" === "chuỗi" để xác định chuỗi hoặc dùng hàm isString(chuỗi) - dấu === để so sánh các phần tử có cùng kiểu DL.
+	+)Chuỗi con sử dụng hàm: slice(vtri bắt đầu, vtri kết thúc), hoặc sử dụng hàm subString(vtri bắt đầu, vtri kết thúc), substr(vtri bắt đầu, số phần tử muốn lấy)
+	+)Tìm vị trí của chuỗi con trong chuỗi cha bằng cách dùng hàm search(chuỗi con) hoặc indexOf(chuỗi con, thứ tự bắt đầu) - trả về vị trí ngay khi tìm dc chuỗi con, lastIndexOf(chuỗi con)
+	 - trả về vị trí chuỗi con cuối cùng trong chuỗi cha. Kiểm tra chuỗi con có nằm trong chuỗi cha không = hàm includes(chuỗi con)
+	+)Hàm thay thế chuỗi: replace(chuỗi con, chuõi cần thay)
+	+)Chuyễn thành chữ hoa, chữ thường: toUpperCase(), toLowerCase()
+
+-)Number:
+	
+	+)toString() ép kiểu về string
+	+)Number(type) trả về một number và định dạng cơ số type = (nhị phân, thập phân, thập lục phân)
+	+)parseFloat() chuyển sang một số float
+	+)parseInt() chuyển sang một số integer
+	+)toString() chuyển sang kiểu  string
+	+)toFixed(n) chuyển sang số có n số lẻ ở đằng sau
+	+)toPrecision(n) chuyển sang số có chiều dài là n
+	+)valueOf() lấy giá trị của biến hoặc một giá trị nào đó
+
+-)Date:
+	+)hàm tạo new Date(year, month, day, hours, minutes, seconds, milliseconds)
+	+)Ba định dạng(ISO: có dạng YYYY-MM-DD hoặc YYYY-MM hoặc YYYY, Long: tháng là 3 chữ cái đầu của tháng trong T.A;Short như trên)
+	+)to String() ép kiểu về string
+	+)các hàm lấy giá trị của Date: getDate(), getDay(), getFullYear(), getMonth(),...
+	+)Các hàm đặt giá trị Date: setDate(), setFullYear(),...
+	+)So sánh sử dụng các toản tử logic để xem biến nào sớm hơn.
+	+)valueOf(): đưa date về dạng nguyên thủy (mi li giây)
+ 	+)Cộng trừ date: phải dùng hàm valueOf() xog mới có thể sử dụng các toán tử.
+
+-)Array
+	+)Khai báo: bằng [...] hoặc bằng new Array(...)
+	+)Truy xuất: tên mảng[index]
+	+)length: số lượng phần tử trong mảng
+	+)join(chuỗi phân cách giữa các ptu): gộp các ptu trong array thành 1 chuỗi
+	+)valueOf(): tương tự join() nhưng chỉ có thể nối = dấu ","
+	+)push(): thêm 1 hoặc nhiều ptu vào cuối mảng
+	+)pop(): xóa ptu cuối trong mảng
+	+)unshift(): thêm 1 hoặc nhiều ptu vào đầu mảng
+	+)shift(): xóa ptu đầu tiên của mảng
+	+)splice(index, howmany, item1,...itemN): thêm ptu vào vtri xác định - howmany: số ptu muốn xóa
+	+)concat(array): ghép 2 mảng vs nhau
+	+)slice(begin,end):lấy ra một số ptu của mảng - chuỗi con
+	+)sort(): sắp xếp mảng theo chiều tăng dần
+	+)reverse(): đảo ngược vị trí các ptu của mảng
+
+-)Object:
+
+	+)Thêm key mới vào object: object.(tên thuộc tính) = value hoặc object["tên thuộc tính"] = value
+	+)Xuất DL ra: object.(thuộc tính) hoặc object["tên thuộc tính"]
+	+)Xóa thuộc tính : delete object.(thuộc tính)
+	+)Tạo clone: object.asign()
+	+)Object.freeze(tên object): ngăn không cho xóa, thêm thuộc tính, thay đổi giá trị object 
+	+)
+	+)
+	+)
+	+)
+	+)
+	+)
+	+)
+	+)
+	+)
+	+)
+	+)
+	+)
+	+)
+	+)
+	+)
+	+)
+	+)
+	+)
+	+)
+
+-)function:
+	
+	+)
