@@ -13,7 +13,7 @@ function App() {
                     <CardImg src="" alt="" style={{border:"2px solid black", height:"100px", width:"100px"}} />
                     <h4>Avatar</h4> 
                 </Col>
-                {/* <Col xs={{"size" : "2", offset:0}}> */}
+                
                 <Col xs = "9">
                     <Row style={{border:"2px solid black"}}>
                         <h4>Video provides a powerful way to help you prove your point. When you click Online Video, you can paste in the embed code for the video you want to add. You can also type a keyword to search online for the video that best fits your document.
