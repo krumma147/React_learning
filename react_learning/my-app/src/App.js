@@ -74,76 +74,45 @@ class App extends Component{
         });
     }
 
-    // likeComment = (ev, i) => {
-    //     let data = this.state.data;
-    //     data.comment[i].like = !data.comment[i].like;
-    //     this.setState({data});
+    likeComment = (ev, i) => {
+        let data = this.state.data;
+        data[i].comment[i].like = !data[i].comment[i].like;
+        this.setState({data});
         
-    // }
+    }
 
-    // disLikeComment = (ev, i) => {
-    //     let data = this.state.data;
-    //     data.comment[i].dislike = !data.comment[i].dislike;
-    //     this.setState({data});
-    //     // console.log(555555);
-    // }
+    disLikeComment = (ev, i) => {
+        let data = this.state.data;
+        data[i].comment[i].dislike = !data[i].comment[i].dislike;
+        this.setState({data});
+        // console.log(555555);
+    }
 
-    // changeText = (ev) => {
-    //     let text = ev.target.value;
-    //     this.setState({text});
-    //     console.log(text);
-    // }
+    changeText = (ev) => {
+        let text = ev.target.value;
+        this.setState({text});
+        console.log(text);
+    }
 
-    // submitBtn = () =>{
-    //     let {data, text} = this.state;
-    //     let obj = {
-    //         user : data.user,
-    //         content : text,
-    //     }
-    //     data.comment.push(obj);
-    //     this.setState({
-    //         data: data,
-    //         text: '',
-    //     })
-    // }
+    submitBtn = () =>{
+        let {data, text} = this.state;
+        let obj = {
+            user : data.user,
+            content : text,
+        }
+        data.comment.push(obj);
+        this.setState({
+            data: data,
+            text: '',
+        })
+    }
 
     render() {
         let {data, text} = this.state;
-        //Comment
-        let arr = Object.values(data).map(key => key);
-        let allComments = arr.map(key => key.comment)
-        //truy cap vao cmt
-        let item = Object.values(allComments).map(key => key.map((c, i)=>
-        {
-            return ( 
-                <div className = "App" style={{padding:"20px"}}>
-                    
-                    <Container className="appDemo Test" >
-                        <Row className = "Comment-other" style={{border:"2px solid black", marginTop:"20px",padding:"20px"}}>
-                            <Row key={i} style={{marginTop:"10px", padding:"10px"}}>
-                                <Col xs = "1">
-                                    <CardImg src="" alt="" style={{border:"2px solid black", height:"50px", width:"50px"}} />
-                                    <h6>{c.author}</h6> 
-                                </Col>
-                                    
-                                <Col xs = {{size:"6", offset:"1"}}>
-                                    <span>{c.content}</span>
-                                </Col>
-                                
-                                <Col xs="2">
-                                    <span class="material-icons" style={{fontSize:"50px", color : c.like ? 'blue' : null}} onClick={ev => this.likeComment(ev, i)}>thumb_up</span>
-                                    <span class="material-icons" style={{fontSize:"50px", marginLeft:"20px", color : c.dislike ? 'red' : null}} onClick={ev => this.disLikeComment(ev, i)}>thumb_down</span>
-                                </Col>
-                            </Row>
-                        </Row>
-                    </Container>
-                </div> 
-                    )
-        }));
 
+        let arr = Object.values(data).map(key => key);
         //Post
         let userPost = arr.map((c, i) => {
-            
             return(
                 <Container>
                         <Row className="userPost" key={i}>
@@ -174,7 +143,25 @@ class App extends Component{
                             </Col>
                         </Row>
 
-                        {item}
+                        <Container className="appDemo Test" >
+                        <Row className = "Comment-other" style={{border:"2px solid black", marginTop:"20px",padding:"20px"}}>
+                            <Row key={i} style={{marginTop:"10px", padding:"10px"}}>
+                                <Col xs = "1">
+                                    <CardImg src="" alt="" style={{border:"2px solid black", height:"50px", width:"50px"}} />
+                                    <h6>{ c.comment.forEach(element => element.author) }</h6> 
+                                </Col>
+                                    
+                                <Col xs = {{size:"6", offset:"1"}}>
+                                    <span>{c.comment.forEach(element => element.content)}</span>
+                                </Col>
+                                
+                                <Col xs="2">
+                                    <span class="material-icons" style={{fontSize:"50px", color : c.comment[i].like ? 'blue' : null}} onClick={ev => this.likeComment(ev, i)}>thumb_up</span>
+                                    <span class="material-icons" style={{fontSize:"50px", marginLeft:"20px", color : c.comment[i].dislike ? 'red' : null}} onClick={ev => this.disLikeComment(ev, i)}>thumb_down</span>
+                                </Col>
+                            </Row>
+                        </Row>
+                    </Container>
                 </Container>
             )});
         
