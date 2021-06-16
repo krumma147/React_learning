@@ -1,15 +1,16 @@
 
 import './App.css';
 import React, {Component} from 'react';
-import { Container, Row ,Col, CardImg, Input, Button} from 'reactstrap'
+import { Container, Row ,Col, CardImg, Input, Button, Modal, ModalHeader, ModalBody, ModalFooter} from 'reactstrap'
 
 class App extends Component{
     constructor(props){
         super(props);
         this.state = {
-            data: {},
+            data: [],
+            user:{},
             status: false,
-            text: ''
+            modal: false,
         }
     }
 
@@ -31,6 +32,7 @@ class App extends Component{
             "Themes and styles also help keep your document coordinated. When you click Design and choose a new Theme, the pictures, charts, and SmartArt graphics change to match your new theme. When you apply styles, your headings change to match the new theme."+
             "Save time in Word with new buttons that show up where you need them. To change the way a picture fits in your document, click it and a button for layout options appears next to it. When you work on a table, click where you want to add a row or a column, and then click the plus sign."+
             "Reading is easier, too, in the new Reading view. You can collapse parts of the document and focus on the text you want. If you need to stop reading before you reach the end, Word remembers where you left off",
+            text:'',
             comment : [
                 {
                     author : "User 1",
@@ -50,6 +52,7 @@ class App extends Component{
             {
             author : "Long",
             content : "content",
+            text:'',
             comment : [
                 {
                     author : "User 3",
@@ -74,48 +77,52 @@ class App extends Component{
         });
     }
 
-    likeComment = (ev, i) => {
+    likeComment = (ev, i, index) => {
         let data = this.state.data;
-        data[i].comment[i].like = !data[i].comment[i].like;
+        data[i].comment[index].like = !data[i].comment[index].like;
         this.setState({data});
         
     }
 
-    disLikeComment = (ev, i) => {
+    disLikeComment = (ev, i, index) => {
         let data = this.state.data;
         data[i].comment[i].dislike = !data[i].comment[i].dislike;
         this.setState({data});
         // console.log(555555);
     }
 
-    changeText = (ev) => {
-        let text = ev.target.value;
-        this.setState({text});
-        console.log(text);
+    changeText = (ev, i) => {
+        let data = this.state.data;
+        data[i].text = ev.target.value;
+        this.setState({data});
     }
 
-    submitBtn = () =>{
-        let {data, text} = this.state;
+    submitBtn = (ev, i) =>{
+        let {data, user} = this.state;
         let obj = {
-            user : data.user,
-            content : text,
+            author : user.name,
+            content : data[i].text,
         }
-        data.comment.push(obj);
+        data[i].comment.push(obj);
+        data[i].text = '';
         this.setState({
-            data: data,
-            text: '',
-        })
+            data
+        });
     }
+
+    toggle = (ev, i) => {
+        this.setState({modal: !this.state.modal});
+        
+    };
 
     render() {
-        let {data, text} = this.state;
-
+        let {data, modal} = this.state;
         let arr = Object.values(data).map(key => key);
         //Post
         let userPost = arr.map((c, i) => {
             return(
-                <Container>
-                        <Row className="userPost" key={i}>
+                <Container >
+                        <Row className="userPost" key={i} style={{backgroundColor:"aquamarine", marginTop:'40px'}}>
                             <Col xs="2" style={{paddingLeft:"30px"}}>
                                 <CardImg src="" alt="" style={{border:"2px solid black", height:"100px", width:"100px"}} />
                                 <h4>{c.author}</h4> 
@@ -125,7 +132,7 @@ class App extends Component{
                                 <Row style={{border:"2px solid black"}}>
                                     <h4>{c.content}</h4>
                                 </Row>
-                                <Row style={{marginTop:"10px"}}>
+                                {/* <Row style={{marginTop:"10px"}}>
                                     <Col xs = "4">
                                         <span style={{fontSize:"30px", textDecoration:"underline", padding:"5px"}}>10</span>
                                         <span class="material-icons" style={{fontSize:"50px"}}>thumb_up</span>
@@ -139,29 +146,65 @@ class App extends Component{
                                     <Col xs = "4">
                                         <span class="material-icons" style={{fontSize:"50px"}}>share</span>
                                     </Col>
-                                </Row>
+                                </Row> */}
+                            </Col>
+
+                            <Col xs={1}>
+                                <Button color="danger" onClick={(ev)=>this.toggle(ev, i)}>Edit</Button>
                             </Col>
                         </Row>
 
-                        <Container className="appDemo Test" >
-                        <Row className = "Comment-other" style={{border:"2px solid black", marginTop:"20px",padding:"20px"}}>
-                            <Row key={i} style={{marginTop:"10px", padding:"10px"}}>
-                                <Col xs = "1">
-                                    <CardImg src="" alt="" style={{border:"2px solid black", height:"50px", width:"50px"}} />
-                                    <h6>{ c.comment.forEach(element => element.author) }</h6> 
-                                </Col>
-                                    
-                                <Col xs = {{size:"6", offset:"1"}}>
-                                    <span>{c.comment.forEach(element => element.content)}</span>
-                                </Col>
-                                
-                                <Col xs="2">
-                                    <span class="material-icons" style={{fontSize:"50px", color : c.comment[i].like ? 'blue' : null}} onClick={ev => this.likeComment(ev, i)}>thumb_up</span>
-                                    <span class="material-icons" style={{fontSize:"50px", marginLeft:"20px", color : c.comment[i].dislike ? 'red' : null}} onClick={ev => this.disLikeComment(ev, i)}>thumb_down</span>
-                                </Col>
+                        <div>
+                            <Modal isOpen={modal} toggle={this.toggle}>
+                                        <ModalHeader toggle={this.toggle}>Modal title</ModalHeader>
+                                        <ModalBody>
+                                            <Input type="textarea" className="inputPost" value={c.content} rows={5} />
+                                        </ModalBody>
+                                        <ModalFooter>
+                                            <Button color="primary" onClick={this.toggle}>Do Something</Button>{' '}
+                                            <Button color="secondary" onClick={this.toggle}>Cancel</Button>
+                                        </ModalFooter>
+                            </Modal>
+                        </div>
+                        
+                        
+                        <Row className = "Comment-other" style={{marginTop:"20px",padding:"20px"}}>
+                            <Row key={i} style={{marginTop:"10px", padding:"10px", backgroundColor:"lightgray"}}> 
+                                {c.comment.map((cm, index)=> {
+                                    return(
+                                        <Row key={index}>
+                                            <Col xs={2}>
+                                                {cm.author}
+                                            </Col>
+
+                                            <Col xs={8}>
+                                                {cm.content}
+                                            </Col>
+
+                                            <Col xs="1">
+                                                <span class="material-icons" style={{fontSize:"50px", color : c.comment[index].like ? 'blue' : null, cursor:'pointer'}} onClick={ev => this.likeComment(ev, i, index)}>thumb_up</span>
+                                                {/* <span class="material-icons" style={{fontSize:"50px", marginLeft:"20px", color : c.comment[i].dislike ? 'red' : null}} onClick={ev => this.disLikeComment(ev, i)}>thumb_down</span> */}
+                                            </Col>
+
+                                            <Col xs={1}>
+                                                edit
+                                            </Col>
+                                        </Row>
+                                    )
+                                })}
                             </Row>
                         </Row>
-                    </Container>
+
+                        <Row className="Comment-User" style={{marginTop:"20px"}} xs="12">
+                            <Input type="text" placeholder="My comment..." value={c.text} onChange = {ev => this.changeText(ev, i)} />
+                        </Row>
+            
+                        <Row className="Push-commentbtn" style={{marginTop:"20px", padding:"0 25vw"}}>
+                            <Button variant="primary" onClick={(ev) => this.submitBtn(ev, i)}>
+                                <span class="material-icons" style={{fontSize:"25px", padding:"0px"}}>add_circle_outline</span>Add comment
+                            </Button>
+                        </Row>
+
                 </Container>
             )});
         
@@ -171,16 +214,8 @@ class App extends Component{
                 
                 {userPost}
                 
-                    <Row className="Comment-User" style={{marginTop:"20px"}} xs="12">
-                        <Input type="text" id="" name="" placeholder="My comment..." value={text} onChange = {ev => this.changeText(ev)} />
-                    </Row>
-            
-                    <Row className="Push-commentbtn" style={{marginTop:"20px", padding:"0 25vw"}}>
-                        <Button variant="primary" onClick={() => this.submitBtn()} style={{backgroundColor:"cyan", color:"black"}}>
-                            <span class="material-icons" style={{fontSize:"25px", padding:"0px"}}>add_circle_outline</span>Add comment
-                        </Button>
-                    </Row>
                 </Container>
+
             </div>
         )
     }
