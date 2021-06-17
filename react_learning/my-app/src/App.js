@@ -116,13 +116,20 @@ class App extends Component{
         let data = this.state.data
         this.setState({modal: !this.state.modal});
         this.state.index = i;//gan index
-        this.state.post = data[i].content
+        this.state.post = data[i].content; // gan post
         // console.log(this.state.index);
     };
 
-    getValues = () => {
-        let post = this.state.post;
-        return post
+    getPost = () => {
+        return this.state.post;
+    }
+
+    editPost = (ev) =>{
+        let data = this.state.data;
+        let id = this.state.id;
+        let post = ev.target.value;
+        data[id].content = post;
+        this.state.index = 0;
     }
 
     render() {
@@ -219,10 +226,10 @@ class App extends Component{
                         <Modal isOpen={modal} toggle={(ev)=>this.toggle(ev, 0)}>
                                     <ModalHeader toggle={(ev)=>this.toggle(ev, 0)}>Modal title</ModalHeader>
                                     <ModalBody>
-                                        <Input type="textarea" className="inputPost" value={this.getValues()} rows={5} />
+                                        <Input type="textarea" className="inputPost" value={this.getPost()} rows={5} />
                                     </ModalBody>
                                     <ModalFooter>
-                                        <Button color="primary" onClick={(ev)=>this.toggle(ev, 0)}>Do Something</Button>{' '}
+                                        <Button color="primary" onClick={(ev)=>this.editPost(ev)}>Change</Button>{' '}
                                         <Button color="secondary" onClick={(ev)=>this.toggle(ev, 0)}>Cancel</Button>
                                     </ModalFooter>
                         </Modal>
