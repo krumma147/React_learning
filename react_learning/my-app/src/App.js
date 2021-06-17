@@ -1,6 +1,6 @@
 
 import './App.css';
-import React, {Component} from 'react';
+import React, {Component, useState} from 'react';
 import { Container, Row ,Col, CardImg, Input, Button, Modal, ModalHeader, ModalBody, ModalFooter} from 'reactstrap'
 
 class App extends Component{
@@ -11,6 +11,8 @@ class App extends Component{
             user:{},
             status: false,
             modal: false,
+            index: 0,
+            post: '',
         }
     }
 
@@ -111,9 +113,17 @@ class App extends Component{
     }
 
     toggle = (ev, i) => {
+        let data = this.state.data
         this.setState({modal: !this.state.modal});
-        
+        this.state.index = i;//gan index
+        this.state.post = data[i].content
+        // console.log(this.state.index);
     };
+
+    getValues = () => {
+        let post = this.state.post;
+        return post
+    }
 
     render() {
         let {data, modal} = this.state;
@@ -149,23 +159,12 @@ class App extends Component{
                                 </Row> */}
                             </Col>
 
+                            {/*               Edit               */}
+                            
                             <Col xs={1}>
                                 <Button color="danger" onClick={(ev)=>this.toggle(ev, i)}>Edit</Button>
                             </Col>
                         </Row>
-
-                        <div>
-                            <Modal isOpen={modal} toggle={this.toggle}>
-                                        <ModalHeader toggle={this.toggle}>Modal title</ModalHeader>
-                                        <ModalBody>
-                                            <Input type="textarea" className="inputPost" value={c.content} rows={5} />
-                                        </ModalBody>
-                                        <ModalFooter>
-                                            <Button color="primary" onClick={this.toggle}>Do Something</Button>{' '}
-                                            <Button color="secondary" onClick={this.toggle}>Cancel</Button>
-                                        </ModalFooter>
-                            </Modal>
-                        </div>
                         
                         
                         <Row className = "Comment-other" style={{marginTop:"20px",padding:"20px"}}>
@@ -215,6 +214,19 @@ class App extends Component{
                 {userPost}
                 
                 </Container>
+
+                <div>
+                        <Modal isOpen={modal} toggle={(ev)=>this.toggle(ev, 0)}>
+                                    <ModalHeader toggle={(ev)=>this.toggle(ev, 0)}>Modal title</ModalHeader>
+                                    <ModalBody>
+                                        <Input type="textarea" className="inputPost" value={this.getValues()} rows={5} />
+                                    </ModalBody>
+                                    <ModalFooter>
+                                        <Button color="primary" onClick={(ev)=>this.toggle(ev, 0)}>Do Something</Button>{' '}
+                                        <Button color="secondary" onClick={(ev)=>this.toggle(ev, 0)}>Cancel</Button>
+                                    </ModalFooter>
+                        </Modal>
+                </div>
 
             </div>
         )
