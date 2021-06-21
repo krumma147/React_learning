@@ -9,7 +9,8 @@ class App extends Component{
         this.state = {
             data: [],
             user:{},
-            status: false,
+            status_cmt: 'block',
+            status_recmt:'none',
             modal: false,
             index: 0,
             post: '',
@@ -107,9 +108,7 @@ class App extends Component{
         }
         data[i].comment.push(obj);
         data[i].text = '';
-        this.setState({
-            data
-        });
+        this.setState({data});
     }
 
     toggle = (ev, i) => {
@@ -121,19 +120,33 @@ class App extends Component{
     };
 
     getPost = () => {
-        return this.state.post;
+        let post = this.state.post;
+        return post;
     }
 
     editPost = (ev) =>{
         let data = this.state.data;
         let id = this.state.id;
-        let post = ev.target.value;
-        data[id].content = post;
+        //data[id].content = this.state.post;// -- ghi đè post sau khi edit lên post cũ xảy ra lỗi
+        console.log(this.state.post);
         this.state.index = 0;
+        this.state.post='';
+        this.setState({data});
+    }
+
+    editCMT = (ev, i, index) => {
+        let data = this.state.data;
+        console.log(data[i].comment[index].content);
+        let temp = this.state.status_cmt;
+        if(temp === 'block'){
+            this.setState({status_cmt:'none',status_recmt:'block'})
+        }
+        //sửa comment
+        this.setState({data});
     }
 
     render() {
-        let {data, modal} = this.state;
+        let {data, modal, user} = this.state;
         let arr = Object.values(data).map(key => key);
         //Post
         let userPost = arr.map((c, i) => {
@@ -169,7 +182,7 @@ class App extends Component{
                             {/*               Edit               */}
                             
                             <Col xs={1}>
-                                <Button color="danger" onClick={(ev)=>this.toggle(ev, i)}>Edit</Button>
+                                <Button color="danger" onClick={(ev)=>this.toggle(ev, i)} style={{display:(user.name == c.author) ? "block" : "none"}}>Edit</Button>
                             </Col>
                         </Row>
                         
@@ -183,8 +196,12 @@ class App extends Component{
                                                 {cm.author}
                                             </Col>
 
-                                            <Col xs={8}>
+                                            <Col xs={8} style={{display:this.state.status_cmt}}>
                                                 {cm.content}
+                                            </Col>
+
+                                            <Col xs={8} style={{display:this.state.status_recmt}}>
+                                                <Input type="" id="" name="" placeholder="" defaultValue={cm.content} />
                                             </Col>
 
                                             <Col xs="1">
@@ -193,7 +210,7 @@ class App extends Component{
                                             </Col>
 
                                             <Col xs={1}>
-                                                edit
+                                                <Button color="primary" onClick={(ev) => this.editCMT(ev, i, index)} style={{display:(user.name == cm.author) ? "block" : "none"}}>Edit</Button>
                                             </Col>
                                         </Row>
                                     )
@@ -202,7 +219,7 @@ class App extends Component{
                         </Row>
 
                         <Row className="Comment-User" style={{marginTop:"20px"}} xs="12">
-                            <Input type="text" placeholder="My comment..." value={c.text} onChange = {ev => this.changeText(ev, i)} />
+                            <Input type="text" placeholder="My comment..." value={c.text} defaultValue={""} onChange = {ev => this.changeText(ev, i)} />
                         </Row>
             
                         <Row className="Push-commentbtn" style={{marginTop:"20px", padding:"0 25vw"}}>
@@ -226,7 +243,7 @@ class App extends Component{
                         <Modal isOpen={modal} toggle={(ev)=>this.toggle(ev, 0)}>
                                     <ModalHeader toggle={(ev)=>this.toggle(ev, 0)}>Modal title</ModalHeader>
                                     <ModalBody>
-                                        <Input type="textarea" className="inputPost" defaultValue={this.getPost()} rows={5} />
+                                        <Input type="textarea" className="inputPost" defaultValue={this.getPost()} onChange={(ev) => this.onChangeCMT(ev)} rows={5} />
                                     </ModalBody>
                                     <ModalFooter>
                                         <Button color="primary" onClick={(ev)=>this.editPost(ev)}>Change</Button>{' '}
