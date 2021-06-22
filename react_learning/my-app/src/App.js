@@ -182,7 +182,7 @@ class App extends Component{
                             {/*               Edit               */}
                             
                             <Col xs={1}>
-                                <Button color="danger" onClick={(ev)=>this.toggle(ev, i)} style={{display:(user.name == c.author) ? "block" : "none"}}>Edit</Button>
+                                <Button color="danger" onClick={(ev)=>this.toggle(ev, i)} style={{display:(user.name === c.author) ? "block" : "none"}}>Edit</Button>
                             </Col>
                         </Row>
                         
@@ -210,7 +210,7 @@ class App extends Component{
                                             </Col>
 
                                             <Col xs={1}>
-                                                <Button color="primary" onClick={(ev) => this.editCMT(ev, i, index)} style={{display:(user.name == cm.author) ? "block" : "none"}}>Edit</Button>
+                                                <Button color="primary" onClick={(ev) => this.editCMT(ev, i, index)} style={{display:(user.name === cm.author) ? "block" : "none"}}>Edit</Button>
                                             </Col>
                                         </Row>
                                     )
@@ -243,7 +243,7 @@ class App extends Component{
                         <Modal isOpen={modal} toggle={(ev)=>this.toggle(ev, 0)}>
                                     <ModalHeader toggle={(ev)=>this.toggle(ev, 0)}>Modal title</ModalHeader>
                                     <ModalBody>
-                                        <Input type="textarea" className="inputPost" defaultValue={this.getPost()} onChange={(ev) => this.onChangeCMT(ev)} rows={5} />
+                                        <Input type="textarea" className="inputPost" defaultValue={this.getPost()} onChange={(ev) => this.editPost(ev)} rows={5} />
                                     </ModalBody>
                                     <ModalFooter>
                                         <Button color="primary" onClick={(ev)=>this.editPost(ev)}>Change</Button>{' '}
