@@ -125,13 +125,20 @@ class App extends Component{
     }
 
     editPost = (ev) =>{
+        // console.log(ev.target.value);
+        this.state.post = ev.target.value;
+        // console.log(this.state.post);
+    }
+
+    saveChangePost = () =>{
         let data = this.state.data;
-        let id = this.state.id;
-        //data[id].content = this.state.post;// -- ghi đè post sau khi edit lên post cũ xảy ra lỗi
-        console.log(this.state.post);
-        this.state.index = 0;
-        this.state.post='';
-        this.setState({data});
+        let id = this.state.index;
+        if(typeof(data[id]) != 'undefinded' )
+        {
+            data[id].content = this.state.post;
+        }
+        this.setState({data,
+            modal: !this.state.modal})
     }
 
     editCMT = (ev, i, index) => {
@@ -246,7 +253,7 @@ class App extends Component{
                                         <Input type="textarea" className="inputPost" defaultValue={this.getPost()} onChange={(ev) => this.editPost(ev)} rows={5} />
                                     </ModalBody>
                                     <ModalFooter>
-                                        <Button color="primary" onClick={(ev)=>this.editPost(ev)}>Change</Button>{' '}
+                                        <Button color="primary" onClick={this.saveChangePost}>Change</Button>{' '}
                                         <Button color="secondary" onClick={(ev)=>this.toggle(ev, 0)}>Cancel</Button>
                                     </ModalFooter>
                         </Modal>
