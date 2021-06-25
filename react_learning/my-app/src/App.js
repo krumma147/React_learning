@@ -9,11 +9,11 @@ class App extends Component{
         this.state = {
             data: [],
             user:{},
-            status_cmt: 'block',
-            status_recmt:'none',
             modal: false,
-            index: 0,
+            index_p: 0,
+            index_m: 0,
             post: '',
+            comment: '',
         }
     }
 
@@ -114,7 +114,7 @@ class App extends Component{
     toggle = (ev, i) => {
         let data = this.state.data
         this.setState({modal: !this.state.modal});
-        this.state.index = i;//gan index
+        this.state.index_p = i;//gan index
         this.state.post = data[i].content; // gan post
         // console.log(this.state.index);
     };
@@ -132,23 +132,25 @@ class App extends Component{
 
     saveChangePost = () =>{
         let data = this.state.data;
-        let id = this.state.index;
+        let id = this.state.index_p;
         if(typeof(data[id]) != 'undefinded' )
         {
             data[id].content = this.state.post;
         }
-        this.setState({data,
-            modal: !this.state.modal})
+        console.log(this.state.post);
+        this.setState({
+            data,
+            modal: !this.state.modal,
+            post: ''});
     }
 
     editCMT = (ev, i, index) => {
         let data = this.state.data;
-        console.log(data[i].comment[index].content);
-        let temp = this.state.status_cmt;
-        if(temp === 'block'){
-            this.setState({status_cmt:'none',status_recmt:'block'})
-        }
-        //sửa comment
+        this.state.index_m = i;
+        this.state.index_p = index;
+        data[i].text = data[i].comment[index].content;
+        data[i].comment.splice(index,1);
+        // console.log(Array.isArray(data[i].comment))
         this.setState({data});
     }
 
@@ -185,8 +187,6 @@ class App extends Component{
                                     </Col>
                                 </Row> */}
                             </Col>
-
-                            {/*               Edit               */}
                             
                             <Col xs={1}>
                                 <Button color="danger" onClick={(ev)=>this.toggle(ev, i)} style={{display:(user.name === c.author) ? "block" : "none"}}>Edit</Button>
@@ -203,12 +203,8 @@ class App extends Component{
                                                 {cm.author}
                                             </Col>
 
-                                            <Col xs={8} style={{display:this.state.status_cmt}}>
+                                            <Col xs={8}>
                                                 {cm.content}
-                                            </Col>
-
-                                            <Col xs={8} style={{display:this.state.status_recmt}}>
-                                                <Input type="" id="" name="" placeholder="" defaultValue={cm.content} />
                                             </Col>
 
                                             <Col xs="1">
@@ -226,7 +222,7 @@ class App extends Component{
                         </Row>
 
                         <Row className="Comment-User" style={{marginTop:"20px"}} xs="12">
-                            <Input type="text" placeholder="My comment..." value={c.text} defaultValue={""} onChange = {ev => this.changeText(ev, i)} />
+                            <Input type="text" placeholder="My comment..." value={c.text} defaultValue={this.state.comment} onChange = {ev => this.changeText(ev, i)} />
                         </Row>
             
                         <Row className="Push-commentbtn" style={{marginTop:"20px", padding:"0 25vw"}}>
