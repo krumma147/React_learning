@@ -31,7 +31,7 @@ class App extends Component{
     }
 
     getDataAPI() {
-      let getListAPI = this.state.api_post;
+      let getListAPI = 'https://60ebfed7e9647b0017cddfbd.mockapi.io/post2';
       fetch(getListAPI)
           .then((response) => response.json())
           .then((get) => {
@@ -54,11 +54,6 @@ class App extends Component{
           })
     }
 
-    // componentDidUpdate(){
-    //   this.getDataAPI();
-    //   this.getCMTAPI();
-    // }
-
     changeAuthor(e){
       let author = e.target.value;
       this.setState({
@@ -75,10 +70,10 @@ class App extends Component{
       //console.log(this.state.postContent);
     }
 
-    componentDidUpdate(){
-      this.getDataAPI();
-        this.getCMTAPI();
-    }
+    // componentDidUpdate(){
+    //   this.getDataAPI();
+    //     this.getCMTAPI();
+    // }
 
     // add Post : method POST  !need double check
     submitBTN = (e) => {
@@ -90,6 +85,7 @@ class App extends Component{
       console.log(`${author} ${content}`);
       let api_post=this.state.api_post;
       if(this.state.setEdit){
+        //edit
         fetch(`${api_post}/${id}`,{
             method: 'PUT',
             headers: {
@@ -100,9 +96,12 @@ class App extends Component{
                 content: content,
             })
         })
-          // .then((response) => response.json())
-          // .then((data)=>this.setState({data:data}))
+          .then((data)=>{
+            this.getDataAPI();
+            this.setState({data: data})
+          })
       }else{
+        //create
         fetch(api_post,{
           method: 'POST',
           body: JSON.stringify({
@@ -113,11 +112,10 @@ class App extends Component{
               'Content-type': 'application/json; charset=UTF-8',
           }
         })
-          .then((response) => response.json())
-          .then((data)=>this.setState({
-            setEdit:false,
-            // data:data,
-          }))
+        .then((data)=>{
+          this.getDataAPI();
+          this.setState({data: data, setEdit:false})
+        })
       }
       
     }
@@ -131,8 +129,10 @@ class App extends Component{
       fetch(`${api_post}/${id}`, {
         method: 'DELETE',
       })
-        .then((response) => response.json())
-        .then((data)=>this.setState({data:data}))
+      .then((data)=>{
+        this.getDataAPI();
+        this.setState({data: data})
+      })
     }
 
     //Edit Post btn put data to state
@@ -173,9 +173,13 @@ class App extends Component{
       const data = this.state.data;
       const id = this.state.indexCMT;
       const postID = data[i].id;
-      let newarr = [...data[i].comments];
+      const postContent = data[i].content;
+      let newarr = data[i].comments;
       newarr = newarr.map(e=>e.toString());
+      // console.log(newarr);
+      // console.log(postID);
       if(this.state.setEditCMT){
+        //edit
         fetch(`${api_cmt}/${id}`,{
           method: 'PUT',
             body: JSON.stringify({
@@ -187,7 +191,11 @@ class App extends Component{
             }
         })
           .then((response) => response.json())
-          .then(cmt=>this.setState({setEditCMT: false,cmt:cmt,editCMT:'',}))
+          .then(cmt=>{
+            this.getCMTAPI();
+            this.setState({setEditCMT: false,cmt:cmt,editCMT:'',})
+          })
+          //create
       }else{
         fetch(api_cmt,{
           method: 'POST',
@@ -200,23 +208,27 @@ class App extends Component{
             }
         })
           .then((response) => response.json())
-          .then((cmt)=>{
+          .then(cmt=>{
+            this.getCMTAPI();
             this.setState({cmt: cmt,indexCMT:cmt.id,})
-            newarr.push(this.state.indexCMT.toString())
-          })
-          .then(
+            let newID = this.state.indexCMT;
+            newarr.push(newID);
+            // console.log(newarr);
             fetch(`${api_post}/${postID}`,{
               method: 'PUT',
               headers: {
                   'Content-type': 'application/json; charset=UTF-8',
               },
               body: JSON.stringify({
-                comments:[...newarr],
+                comments: newarr,
+              })
+            })
+
+              .then(data=>{
+                this.getDataAPI();
+                this.setState({indexCMT:'',data: data});
               })
           })
-            .then((response) => response.json())
-            .then(this.setState({indexCMT:'',}))
-          )
       }
     }
 
@@ -258,8 +270,10 @@ class App extends Component{
             body: JSON.stringify({
               comments: newarr,
             })
-            // .then((response) => response.json())
-            // .then(this.setState({data,cmt,}))
+        })
+        .then(cmt=>{
+          this.getCMTAPI();
+          this.setState({cmt: cmt,})
         })
         )
     }
