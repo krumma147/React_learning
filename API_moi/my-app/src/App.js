@@ -2,7 +2,8 @@ import logo from './logo.svg';
 import './App.css';
 import { render } from '@testing-library/react';
 import React,{Component, useState} from 'react';
-import { Button,Col,Row, Container,Form, FormGroup, Label, Input, FormText} from 'reactstrap';
+import { Button,Col,Row, Container,Form, FormGroup, Label, Input} from 'reactstrap';
+import Post from './testProps';
 
 class App extends Component{
   constructor(props){
@@ -138,7 +139,7 @@ class App extends Component{
     //Edit Post btn put data to state
 
     editPostBTN=(ev,i)=>{
-      ev.preventDefault();
+      // ev.preventDefault();
       let data = this.state.data;
       this.setState({
         indexPost:data[i].id,
@@ -169,11 +170,10 @@ class App extends Component{
       const content = this.state.cmtContent;
       const api_cmt = this.state.api_cmt;
       const api_post = this.state.api_post;
-      const cmt = this.state.cmt;
+      // const cmt = this.state.cmt;const postContent = data[i].content;
       const data = this.state.data;
       const id = this.state.indexCMT;
       const postID = data[i].id;
-      const postContent = data[i].content;
       let newarr = data[i].comments;
       newarr = newarr.map(e=>e.toString());
       // console.log(newarr);
@@ -210,7 +210,7 @@ class App extends Component{
           .then((response) => response.json())
           .then(cmt=>{
             this.getCMTAPI();
-            this.setState({cmt: cmt,indexCMT:cmt.id,})
+            this.setState({cmt: cmt,indexCMT:cmt.id,editCMT: '',})
             let newID = this.state.indexCMT;
             newarr.push(newID);
             // console.log(newarr);
@@ -257,7 +257,7 @@ class App extends Component{
       let postID = data[i].id;
       let newarr = data[i].comments.filter(e=>e!=cmtID);
       newarr = newarr.map(e=>e.toString());
-      console.log(newarr)
+      // console.log(newarr)
       fetch(`${api_cmt}/${cmtID}`,{
         method: 'DELETE',
       })
@@ -284,56 +284,54 @@ class App extends Component{
       let arrCMT = Object.values(cmt).map(key=>key);
       let post = arrPOST.map((e, i)=>{
         return(
-            <Container>
-                <Row key={i} style={{marginTop:"30px",padding:"20px", backgroundColor:"#008B8B"}}>
-                  <h1>Post {i+1}</h1>
-                  <Col xs="auto">
-                    <p>{e.author}</p>
-                  </Col>
-          
-                  <Col xs="auto">
-                    {e.content}
-                  </Col>
+            <Container style={{backgroundColor:'#A9A9A9',borderRadius:'10px'}}>
+                <Row key={i} style={{marginTop:"30px",padding:"20px"}}>
 
-                  <Col xs="2">
-                    {/* <Button color="primary" onClick={(ev)=>this.editPostBTN(ev, i)}>Edit</Button> */}
-                    <span class="material-icons" onClick={(ev)=>this.editPostBTN(ev, i)}>edit</span>
-                  </Col>
+                  <Post obj={e} edit={ev=>this.editPostBTN(ev,i)} delete={ev=>this.deletePostBTN(ev,i)} />
 
-                  <Col xs="2">
-                    {/* <Button color="danger" onClick={(ev)=>this.deletePostBTN(ev, i)}>Delete</Button> */}
-                    <span class="material-icons" onClick={(ev)=>this.deletePostBTN(ev, i)}>delete</span>
-                  </Col>
-
-                  <Row style={{marginTop:"40px"}}>
+                  <Row style={{marginTop:"20px", paddingTop:'20px',  borderTop:'1px solid black'}}>
                   {arrCMT.map((c,index)=>{
                     if(e.comments.includes(c.id)){
                       return(
-                        <Row key={index} style={{backgroundColor:"#FFE4E1", padding:"10px", margin:"10px 10px"}}>
-                          <Col>
-                            {c.author}
-                          </Col>
+                        <Row key={index} style={{backgroundColor:"#FFE4E1", padding:"10px", margin:"10px 10px",borderRadius:'10px'}}>
+                          <Row>
+                            <Col xs="10">
+                              {c.author}
+                            </Col>
 
-                          <Col>
-                            {c.content}
-                          </Col>
+                            <Col xs="1">
+                              <span class="material-icons" onClick={(ev)=> this.editCMTBTN(ev,index)}>edit</span>
+                              {/* <Button color="primary" onClick={(ev)=> this.editCMTBTN(ev,index)}>Edit</Button> */}
+                            </Col>
 
-                          <Col xs="2">
-                            <Button color="primary" onClick={(ev)=> this.editCMTBTN(ev,index)}>Edit</Button>
-                          </Col>
+                            <Col xs="1">
+                              {/* <Button color="danger" onClick={(ev)=>this.deleteCMTBTN(ev,i,index)}>Delete</Button> */}
+                              <span class="material-icons" onClick={(ev)=>this.deleteCMTBTN(ev,i,index)}>delete</span>
+                            </Col>
+                          </Row>
+                          
+                          <Row>
+                            <Col xs="11">
+                              {c.content}
+                            </Col>
+                            <Col xs="1"></Col>
+                          </Row>
 
-                          <Col xs="2">
-                            <Button color="danger" onClick={(ev)=>this.deleteCMTBTN(ev,i,index)}>Delete</Button>
-                          </Col>
                         </Row>
+                        
                       )
                     }
                   })}
 
-                  <Row key={i} style={{margin:"0 25%", maxWidth:"600px"}}>
-                    <Input type="text" placeholder="author" onChange={(ev) => this.changecmtAuthor(ev)}/>
-                    <Input type="text" placeholder="comments" defaultValue={this.state.editCMT} onChange={(ev) => this.changecmtContent(ev)}/>
-                    <Button onClick={e=>this.createCMT(e,i)} color="success">Add cmt</Button>
+                  <Row key={i}>
+                    <Col xs="4"></Col>
+                    <Col xs="4">
+                      <Input type="text" placeholder="author" onChange={(ev) => this.changecmtAuthor(ev)}/>
+                      <Input type="text" placeholder="comments" defaultValue={this.state.editCMT} onChange={(ev) => this.changecmtContent(ev)}/>
+                      <Button onClick={e=>this.createCMT(e,i)} color="success">Add cmt</Button>
+                    </Col>
+                    <Col xs="4"></Col>
+                    
                   </Row>        
                 </Row>
               </Row>
