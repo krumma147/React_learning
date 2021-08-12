@@ -2,14 +2,6 @@ import React,{Component} from 'react';
 import { Button,Col,Row, Container,Form, FormGroup, Label, Input} from 'reactstrap';
 
 class Post extends Component{
-    doSTH1=()=>{
-        console.log('edit')
-    }
-
-    doSTH2=()=>{
-        console.log('delete')
-    }
-
     render(){
         return (
             <Container>

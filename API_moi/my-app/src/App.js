@@ -5,174 +5,151 @@ import React,{Component, useState} from 'react';
 import { Button,Col,Row, Container,Form, FormGroup, Label, Input} from 'reactstrap';
 import Post from './testProps';
 
-class App extends Component{
-  constructor(props){
-        super(props);
-        this.state = {
-            data: [],
-            user: '',
-            cmt:[],
-            postAuthor: '',
-            postContent: '',
-            indexPost:'',
-            api_post: 'https://60ebfed7e9647b0017cddfbd.mockapi.io/post2',
-            api_cmt:'https://60ebfed7e9647b0017cddfbd.mockapi.io/comments',
-            setEdit: false,
-            setEditCMT: false,
-            cmtAuthor: '',
-            cmtContent: '',
-            indexCMT:'',
-            editCMT:'',
-        }
+function App() {
+    const api_post ='https://60ebfed7e9647b0017cddfbd.mockapi.io/post2';
+    const api_cmt='https://60ebfed7e9647b0017cddfbd.mockapi.io/comments';
+
+    const componentDidMount = () =>{
+        getDataAPI();
+        getCMTAPI();
     }
 
-    componentDidMount(){
-        this.getDataAPI();
-        this.getCMTAPI();
-    }
-
-    getDataAPI() {
-      let getListAPI = 'https://60ebfed7e9647b0017cddfbd.mockapi.io/post2';
-      fetch(getListAPI)
+    const [data, setData] = useState([]);
+    const [user, setUser] = useState('');
+    const getDataAPI = () => {
+      fetch(api_post)
           .then((response) => response.json())
           .then((get) => {
               console.log(get)
-              this.setState({
-                  data: get,
-                  user:'nobody'
-                })
+              setData(get);
+              setUser('nobody')
           })
     }
 
-    getCMTAPI(){
-      let getCMTAPI = this.state.api_cmt;
-      fetch(getCMTAPI)
+    const [cmt, setCMT] = useState([]);
+    const getCMTAPI = () => {
+      fetch(api_cmt)
           .then((response) => response.json())
           .then((get) => {
               console.log(get)
-              this.setState({
-                  cmt: get})
+              setCMT(get);
           })
     }
 
-    changeAuthor(e){
+    const [postAuthor, setPostAuthor]= useState('');
+    const changeAuthor = (e) => {
       let author = e.target.value;
-      this.setState({
-        postAuthor:author,
-      })
+      setPostAuthor(author);
       //console.log(this.state.postAuthor);
     }
-
-    changeContent(e){
+    
+    const [postContent, setPostContent]= useState('');
+    const changeContent = (e) => {
       let content = e.target.value;
-      this.setState({
-        postContent:content,
-      })
+      setPostContent(content);
       //console.log(this.state.postContent);
     }
 
-    // componentDidUpdate(){
-    //   this.getDataAPI();
-    //     this.getCMTAPI();
-    // }
-
-    // add Post : method POST  !need double check
-    submitBTN = (e) => {
-      e.preventDefault();
-      let data = this.state.data;
-      let author = this.state.postAuthor;
-      let content = this.state.postContent;
-      let id = this.state.indexPost;
-      console.log(`${author} ${content}`);
-      let api_post=this.state.api_post;
-      if(this.state.setEdit){
-        //edit
-        fetch(`${api_post}/${id}`,{
-            method: 'PUT',
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-            body: JSON.stringify({
-                author: author,
-                content: content,
-            })
-        })
-          .then((data)=>{
-            this.getDataAPI();
-            this.setState({data: data})
-          })
-      }else{
-        //create
-        fetch(api_post,{
-          method: 'POST',
-          body: JSON.stringify({
-              author : author,
-              content: content,
-          }),
-          headers: {
-              'Content-type': 'application/json; charset=UTF-8',
-          }
-        })
-        .then((data)=>{
-          this.getDataAPI();
-          this.setState({data: data, setEdit:false})
-        })
-      }
-      
-    }
-
-    // Delete Post
-    deletePostBTN = (ev, i) =>{
-      ev.preventDefault();
-      let api_post=this.state.api_post;
-      let data = this.state.data;
-      let id = data[i].id
-      fetch(`${api_post}/${id}`, {
-        method: 'DELETE',
-      })
-      .then((data)=>{
-        this.getDataAPI();
-        this.setState({data: data})
-      })
-    }
-
     //Edit Post btn put data to state
-
-    editPostBTN=(ev,i)=>{
-      // ev.preventDefault();
-      let data = this.state.data;
-      this.setState({
-        indexPost:data[i].id,
-        postAuthor:data[i].author,
-        postContent:data[i].content,
-        setEdit:true,
-      })
+    const [IDPost,setIDPost] = useState('');
+    const [editPost, seteditPost] = useState(false);
+    const editPostBTN = (ev,i) =>{
+      ev.preventDefault();
+      setIDPost(data[i].id);
+      setPostAuthor(data[i].author);
+      setPostContent(data[i].content);
+      seteditPost(true);
       let author = document.getElementById("author-post");
       let content = document.getElementById("content-post");
       author.value = data[i].author;
       content.value = data[i].content;
     }
 
-    changecmtAuthor = (ev) =>{
-      this.state.cmtAuthor = ev.target.value;
+    // add Post : method POST 
+    const submitBTN = (e) => {
+      e.preventDefault();
+      console.log(`${postAuthor} ${postContent}`);
+      if(editPost){
+        //edit
+        fetch(`${api_post}/${IDPost}`,{
+            method: 'PUT',
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+            body: JSON.stringify({
+                author: postAuthor,
+                content: postContent,
+            })
+        })
+          .then((data)=>{
+            getDataAPI();
+            setData(data);
+          })
+      }else{
+        //create
+        fetch(api_post,{
+          method: 'POST',
+          body: JSON.stringify({
+              author : postAuthor,
+              content: postContent,
+          }),
+          headers: {
+              'Content-type': 'application/json; charset=UTF-8',
+          }
+        })
+        .then((data)=>{
+          getDataAPI();
+          setData(data);
+          seteditPost(false);
+        })
+      }
+      
+    }
+
+    // Delete Post
+    const deletePostBTN = (ev, i) =>{
+      ev.preventDefault();
+      const id = data[i].id
+      fetch(`${api_post}/${id}`, {
+        method: 'DELETE',
+      })
+      .then((data)=>{
+        getDataAPI();
+        setData(data);
+      })
+    }
+
+    const [cmtAuthor, setcmtAuthor] = useState('');
+    const changecmtAuthor = (ev) =>{
+      setcmtAuthor(ev.target.value);
       // console.log(this.state.cmtAuthor)
     }
 
-    changecmtContent = (ev) =>{
-      this.state.cmtContent = ev.target.value;
+    const [cmtContent, setcmtContent] = useState('');
+    const changecmtContent = (ev) =>{
+      setcmtContent(ev.target.value);
       // console.log(this.state.cmtContent)
     }
 
+    //Edit btn put comments data to state
+    const [changeCMT, setchangeCMT] = useState('');
+    const [idCMT, setidCMT] = useState('');
+    const [editCMT, seteditCMT] = useState(false);
+    const editCMTBTN=(ev,index)=>{
+      ev.preventDefault();
+      let author = cmt[index].author; 
+      let content = cmt[index].content;
+      let id = cmt[index].id;
+      setchangeCMT(cmt[index].content);
+      setidCMT(cmt[index].id);
+      seteditCMT(true);
+      console.log(`${cmt[index].author} ${cmt[index].content} ${idCMT}`)
+    }
+
     //create cmt content
-    createCMT = (e,i) => {
+    const createCMT = (e,i) => {
       e.preventDefault();
-      const author = this.state.cmtAuthor;
-      const content = this.state.cmtContent;
-      const api_cmt = this.state.api_cmt;
-      const api_post = this.state.api_post;
       // const cmt = this.state.cmt;const postContent = data[i].content;
-      const data = this.state.data;
-      const id = this.state.indexCMT;
       const postID = data[i].id;
       let newarr = data[i].comments;
       newarr = newarr.map(e=>e.toString());
@@ -180,11 +157,11 @@ class App extends Component{
       // console.log(postID);
       if(this.state.setEditCMT){
         //edit
-        fetch(`${api_cmt}/${id}`,{
+        fetch(`${api_cmt}/${idCMT}`,{
           method: 'PUT',
             body: JSON.stringify({
                 // author : user name
-                content: content,
+                content: cmtContent,
             }),
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
@@ -192,16 +169,18 @@ class App extends Component{
         })
           .then((response) => response.json())
           .then(cmt=>{
-            this.getCMTAPI();
-            this.setState({setEditCMT: false,cmt:cmt,editCMT:'',})
+            getCMTAPI();
+            seteditCMT(false);
+            setCMT(cmt);
+            setchangeCMT('');
           })
           //create
       }else{
         fetch(api_cmt,{
           method: 'POST',
             body: JSON.stringify({
-                author : author,// author : user name
-                content: content,
+                author : cmtAuthor,// author : user name
+                content: cmtContent,
             }),
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
@@ -209,10 +188,11 @@ class App extends Component{
         })
           .then((response) => response.json())
           .then(cmt=>{
-            this.getCMTAPI();
-            this.setState({cmt: cmt,indexCMT:cmt.id,editCMT: '',})
-            let newID = this.state.indexCMT;
-            newarr.push(newID);
+            getCMTAPI();
+            setCMT(cmt);
+            setidCMT(cmt.id);
+            setchangeCMT('');
+            newarr.push(idCMT);
             // console.log(newarr);
             fetch(`${api_post}/${postID}`,{
               method: 'PUT',
@@ -223,39 +203,22 @@ class App extends Component{
                 comments: newarr,
               })
             })
-
               .then(data=>{
-                this.getDataAPI();
-                this.setState({indexCMT:'',data: data});
+                getDataAPI();
+                setData(data);
+                setidCMT('');
               })
           })
       }
     }
 
-    //Edit btn put comments data to state
-
-    editCMTBTN=(ev,index)=>{
-      ev.preventDefault();
-      let data = this.state.cmt;
-      let author = data[index].author; 
-      let content = data[index].content;
-      let id = data[index].id;
-      this.setState({
-        editCMT:data[index].content,
-        indexCMT: data[index].id,
-        setEditCMT: true,
-      })
-      console.log(`${data[index].author} ${data[index].content} ${this.state.indexCMT}`)
-    }
-
     //Delete btn method : Delete
 
-    deleteCMTBTN=(ev,i,index)=>{
+    const deleteCMTBTN=(ev,i,index)=>{
       ev.preventDefault();
-      let {data,cmt, api_cmt, api_post} = this.state;
-      let cmtID = cmt[index].id;
-      let postID = data[i].id;
-      let newarr = data[i].comments.filter(e=>e!=cmtID);
+      const cmtID = cmt[index].id;
+      const postID = data[i].id;
+      const newarr = data[i].comments.filter(e=>e!=cmtID);
       newarr = newarr.map(e=>e.toString());
       // console.log(newarr)
       fetch(`${api_cmt}/${cmtID}`,{
@@ -272,88 +235,81 @@ class App extends Component{
             })
         })
         .then(cmt=>{
-          this.getCMTAPI();
-          this.setState({cmt: cmt,})
+          getCMTAPI();
+          setCMT(cmt);
         })
         )
     }
 
-    render() {
-      let {data,cmt} = this.state;
-      let arrPOST = Object.values(data).map(key=>key);
-      let arrCMT = Object.values(cmt).map(key=>key);
-      let post = arrPOST.map((e, i)=>{
-        return(
-            <Container style={{backgroundColor:'#A9A9A9',borderRadius:'10px'}}>
-                <Row key={i} style={{marginTop:"30px",padding:"20px"}}>
+    const post = data.map((e, i)=>{
+      return(
+          <Container style={{backgroundColor:'#A9A9A9',borderRadius:'10px'}}>
+              <Row key={i} style={{marginTop:"30px",padding:"20px"}}>
 
-                  <Post obj={e} edit={ev=>this.editPostBTN(ev,i)} delete={ev=>this.deletePostBTN(ev,i)} />
+                <Post obj={e} edit={ev=>editPostBTN(ev,i)} delete={ev=>deletePostBTN(ev,i)} />
 
-                  <Row style={{marginTop:"20px", paddingTop:'20px',  borderTop:'1px solid black'}}>
-                  {arrCMT.map((c,index)=>{
-                    if(e.comments.includes(c.id)){
-                      return(
-                        <Row key={index} style={{backgroundColor:"#FFE4E1", padding:"10px", margin:"10px 10px",borderRadius:'10px'}}>
-                          <Row>
-                            <Col xs="10">
-                              {c.author}
-                            </Col>
+                <Row style={{marginTop:"20px", paddingTop:'20px',  borderTop:'1px solid black'}}>
+                {cmt.map((c,index)=>{
+                  if(e.comments.includes(c.id)){
+                    return(
+                      <Row key={index} style={{backgroundColor:"#FFE4E1", padding:"10px", margin:"10px 10px",borderRadius:'10px'}}>
+                        <Row>
+                          <Col xs="10">
+                            {c.author}
+                          </Col>
 
-                            <Col xs="1">
-                              <span class="material-icons" onClick={(ev)=> this.editCMTBTN(ev,index)}>edit</span>
-                              {/* <Button color="primary" onClick={(ev)=> this.editCMTBTN(ev,index)}>Edit</Button> */}
-                            </Col>
+                          <Col xs="1">
+                          <span class="material-icons" onClick={(ev)=> editCMTBTN(ev,index)}>edit</span>
+                            {/* <Button color="primary" onClick={(ev)=> this.editCMTBTN(ev,index)}>Edit</Button> */}
+                          </Col>
 
-                            <Col xs="1">
-                              {/* <Button color="danger" onClick={(ev)=>this.deleteCMTBTN(ev,i,index)}>Delete</Button> */}
-                              <span class="material-icons" onClick={(ev)=>this.deleteCMTBTN(ev,i,index)}>delete</span>
-                            </Col>
-                          </Row>
-                          
-                          <Row>
-                            <Col xs="11">
-                              {c.content}
-                            </Col>
-                            <Col xs="1"></Col>
-                          </Row>
-
+                          <Col xs="1">
+                            {/* <Button color="danger" onClick={(ev)=>this.deleteCMTBTN(ev,i,index)}>Delete</Button> */}
+                            <span class="material-icons" onClick={(ev)=>deleteCMTBTN(ev,i,index)}>delete</span>
+                          </Col>
                         </Row>
+                          
+                        <Row>
+                          <Col xs="11">
+                            {c.content}
+                          </Col>
+                          <Col xs="1"></Col>
+                        </Row>
+                      </Row>
                         
-                      )
-                    }
-                  })}
+                    )
+                  }
+                })}
 
-                  <Row key={i}>
-                    <Col xs="4"></Col>
-                    <Col xs="4">
-                      <Input type="text" placeholder="author" onChange={(ev) => this.changecmtAuthor(ev)}/>
-                      <Input type="text" placeholder="comments" defaultValue={this.state.editCMT} onChange={(ev) => this.changecmtContent(ev)}/>
-                      <Button onClick={e=>this.createCMT(e,i)} color="success">Add cmt</Button>
-                    </Col>
-                    <Col xs="4"></Col>
-                    
-                  </Row>        
-                </Row>
+                <Row key={i}>
+                  <Col xs="4"></Col>
+                  <Col xs="4">
+                    <Input type="text" placeholder="author" onChange={(ev) => changecmtAuthor(ev)}/>
+                    <Input type="text" placeholder="comments" defaultValue={changeCMT} onChange={(ev) => changecmtContent(ev)}/>
+                    <Button onClick={e=>createCMT(e,i)} color="success">Add cmt</Button>
+                  </Col>
+                  <Col xs="4"></Col>
+                </Row>        
               </Row>
+            </Row>
 
-            </Container>
-        )
-      });
-
-      return (
-        <div>
-          <h1>API 2 </h1>
-          <Form style={{marginTop:"30px",padding:"50px", backgroundColor:"yellow"}}>
-            <Label for="author-post" />Author 
-            <Input type="text" id="author-post" placeholder="author...." onChange={(e) => this.changeAuthor(e) } />
-            <Label for="content-post" />Content
-            <Input type="textarea" id="content-post" placeholder="content...." onChange={e => this.changeContent(e) }/>
-            <Button color="primary" onClick={e=>this.submitBTN(e)}>Submit</Button>  
-          </Form>
-          {post}
-        </div>
+          </Container>
       )
-    }
-}
+    });
+
+    return (
+      <div>
+        <h1>API 2 </h1>
+        <Form style={{marginTop:"30px",padding:"50px", backgroundColor:"yellow"}}>
+          <Label for="author-post" />Author 
+          <Input type="text" id="author-post" placeholder="author...." onChange={(e) => changeAuthor(e) } />
+          <Label for="content-post" />Content
+          <Input type="textarea" id="content-post" placeholder="content...." onChange={e => changeContent(e) }/>
+          <Button color="primary" onClick={e=>submitBTN(e)}>Submit</Button>  
+        </Form>
+        {post}
+      </div>
+    )
+  }
 
 export default App;
